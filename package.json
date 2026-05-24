@@ -1,0 +1,6 @@
+{
+  "name": "debateforge",
+  "version": "1.0.0",
+  "description": "AI-powered debate practice tool",
+  "engines": { "node": ">=18" }
+}

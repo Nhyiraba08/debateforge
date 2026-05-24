@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DebateForge — Sharpen Your Arguments</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink: #0f0e0c;
+      --paper: #f5f0e8;
+      --cream: #ede7d9;
+      --gold: #c9a84c;
+      --gold-light: #e8cc7a;
+      --red: #c0392b;
+      --green: #1a6b3c;
+      --muted: #7a7060;
+      --border: #d4c9b0;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      background-image:
+        radial-gradient(ellipse at 10% 20%, rgba(201,168,76,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse at 90% 80%, rgba(192,57,43,0.05) 0%, transparent 60%);
+    }
+
+    /* ── HEADER ── */
+    header {
+      border-bottom: 2px solid var(--ink);
+      padding: 1.4rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--paper);
+      position: sticky; top: 0; z-index: 100;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+    .logo span { color: var(--gold); }
+
+    .tagline {
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      text-align: center;
+      padding: 5rem 2rem 3rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+    }
+    .hero h1 em {
+      font-style: italic;
+      color: var(--gold);
+    }
+    .hero p {
+      margin-top: 1.2rem;
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.7;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      display: flex; align-items: center; gap: 1rem;
+      max-width: 700px; margin: 0 auto 2rem;
+      padding: 0 2rem;
+    }
+    .divider::before, .divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+    .divider span {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── MAIN FORM CARD ── */
+    .card {
+      max-width: 700px;
+      margin: 0 auto 3rem;
+      padding: 0 2rem;
+    }
+
+    .form-section {
+      background: white;
+      border: 1.5px solid var(--border);
+      border-radius: 4px;
+      padding: 2rem;
+      margin-bottom: 1rem;
+      box-shadow: 4px 4px 0 var(--border);
+    }
+
+    label {
+      display: block;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.6rem;
+      font-weight: 500;
+    }
+
+    input[type="text"], textarea {
+      width: 100%;
+      background: var(--paper);
+      border: 1.5px solid var(--border);
+      border-radius: 3px;
+      padding: 0.85rem 1rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.97rem;
+      color: var(--ink);
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    input[type="text"]:focus, textarea:focus {
+      border-color: var(--gold);
+      background: #fffdf7;
+    }
+    textarea { resize: vertical; min-height: 130px; line-height: 1.6; }
+
+    /* topic suggestions */
+    .suggestions {
+      display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.8rem;
+    }
+    .suggestion-pill {
+      font-size: 0.75rem;
+      padding: 0.3rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      cursor: pointer;
+      color: var(--muted);
+      background: var(--cream);
+      transition: all 0.15s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .suggestion-pill:hover {
+      border-color: var(--gold);
+      color: var(--ink);
+      background: #fffdf7;
+    }
+
+    /* ── STANCE TOGGLE ── */
+    .stance-group {
+      display: flex; gap: 0.6rem; margin-top: 0.5rem;
+    }
+    .stance-btn {
+      flex: 1; padding: 0.75rem;
+      border: 1.5px solid var(--border);
+      border-radius: 3px;
+      background: var(--paper);
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--muted);
+      transition: all 0.15s;
+      text-align: center;
+    }
+    .stance-btn.active {
+      border-color: var(--ink);
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    /* ── CTA BUTTONS ── */
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+    }
+    .btn {
+      padding: 0.9rem 1.5rem;
+      border-radius: 3px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      border: 1.5px solid transparent;
+      transition: all 0.18s;
+      display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+    }
+    .btn-primary {
+      background: var(--ink);
+      color: var(--paper);
+      border-color: var(--ink);
+    }
+    .btn-primary:hover { background: #2c2a26; }
+
+    .btn-secondary {
+      background: var(--gold);
+      color: var(--ink);
+      border-color: var(--gold);
+    }
+    .btn-secondary:hover { background: var(--gold-light); }
+
+    .btn:disabled {
+      opacity: 0.45; cursor: not-allowed;
+    }
+
+    /* ── RESULTS ── */
+    #results { max-width: 700px; margin: 0 auto 4rem; padding: 0 2rem; }
+
+    .result-card {
+      background: white;
+      border: 1.5px solid var(--border);
+      border-radius: 4px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 4px 4px 0 var(--border);
+      animation: slideUp 0.4s ease;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .result-label::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+
+    .opponent-text {
+      font-size: 0.97rem;
+      line-height: 1.8;
+      color: var(--ink);
+    }
+    .opponent-text p + p { margin-top: 1rem; }
+
+    /* ── SCORE GRID ── */
+    .score-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+      margin: 1.2rem 0;
+    }
+    .score-item {
+      background: var(--paper);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 0.85rem 1rem;
+    }
+    .score-name {
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.35rem;
+    }
+    .score-bar-wrap {
+      height: 6px; background: var(--cream);
+      border-radius: 3px; overflow: hidden; margin-bottom: 0.3rem;
+    }
+    .score-bar {
+      height: 100%; border-radius: 3px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      transition: width 0.8s ease;
+    }
+    .score-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .overall-score {
+      text-align: center;
+      padding: 1.5rem;
+      background: var(--ink);
+      border-radius: 3px;
+      color: var(--paper);
+      margin-bottom: 1rem;
+    }
+    .overall-score .big-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.5rem;
+      font-weight: 900;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .overall-score .out-of {
+      font-size: 0.8rem;
+      color: #9a9080;
+      margin-top: 0.2rem;
+    }
+
+    .verdict {
+      font-style: italic;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      color: var(--muted);
+      text-align: center;
+      margin: 1rem 0;
+      border-left: 3px solid var(--gold);
+      padding-left: 1rem;
+      text-align: left;
+    }
+
+    .feedback-block { margin-top: 1rem; }
+    .feedback-block h4 {
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 0.4rem;
+    }
+    .feedback-block h4.weak { color: var(--red); }
+    .feedback-block p {
+      font-size: 0.9rem;
+      line-height: 1.7;
+      color: var(--ink);
+    }
+
+    /* ── SPINNER ── */
+    .spinner-wrap {
+      display: flex; align-items: center; justify-content: center;
+      gap: 0.7rem; padding: 2rem;
+      color: var(--muted); font-size: 0.85rem;
+    }
+    .spinner {
+      width: 20px; height: 20px;
+      border: 2px solid var(--border);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.78rem;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 500px) {
+      .actions { grid-template-columns: 1fr; }
+      .score-grid { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 2.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Debate<span>Forge</span></div>
+  <div class="tagline">AI-Powered Debate Practice</div>
+</header>
+
+<section class="hero">
+  <h1>Argue better.<br/><em>Think sharper.</em></h1>
+  <p>Practice your debating skills against an AI opponent that fights back — then get scored by an AI judge. No mercy. Only growth.</p>
+</section>
+
+<div class="divider"><span>Start a Round</span></div>
+
+<div class="card">
+  <div class="form-section">
+
+    <label for="topic">Debate Topic</label>
+    <input type="text" id="topic" placeholder="e.g. Social media does more harm than good" />
+    <div class="suggestions" id="suggestions"></div>
+
+    <br/>
+    <label>Your Stance</label>
+    <div class="stance-group">
+      <button class="stance-btn active" data-stance="for" onclick="setStance('for', this)">✓ &nbsp;I argue FOR this</button>
+      <button class="stance-btn" data-stance="against" onclick="setStance('against', this)">✗ &nbsp;I argue AGAINST this</button>
+    </div>
+
+    <br/>
+    <label for="argument">Your Argument</label>
+    <textarea id="argument" placeholder="Make your case here. Be specific — the stronger your argument, the harder the AI will push back..."></textarea>
+
+    <div class="actions">
+      <button class="btn btn-primary" id="btnOpponent" onclick="runDebate('opponent')">
+        ⚔️ &nbsp;Face the Opponent
+      </button>
+      <button class="btn btn-secondary" id="btnJudge" onclick="runDebate('judge')">
+        ⚖️ &nbsp;Get Judged
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<div id="results"></div>
+
+<footer>DebateForge &mdash; Built with the Anthropic Claude API &mdash; Sharpen your mind, one argument at a time.</footer>
+
+<script>
+  const TOPICS = [
+    "AI will replace most human jobs",
+    "Social media does more harm than good",
+    "University education should be free",
+    "Death penalty should be abolished",
+    "Climate change is the biggest threat to humanity",
+    "Smartphones should be banned in schools",
+    "Ghana should invest more in renewable energy",
+  ];
+
+  let currentStance = "for";
+
+  // Populate suggestion pills
+  const suggestionsEl = document.getElementById("suggestions");
+  TOPICS.forEach(t => {
+    const pill = document.createElement("button");
+    pill.className = "suggestion-pill";
+    pill.textContent = t;
+    pill.onclick = () => { document.getElementById("topic").value = t; };
+    suggestionsEl.appendChild(pill);
+  });
+
+  function setStance(stance, el) {
+    currentStance = stance;
+    document.querySelectorAll(".stance-btn").forEach(b => b.classList.remove("active"));
+    el.classList.add("active");
+  }
+
+  function setLoading(loading) {
+    document.getElementById("btnOpponent").disabled = loading;
+    document.getElementById("btnJudge").disabled = loading;
+  }
+
+  async function runDebate(mode) {
+    const topic = document.getElementById("topic").value.trim();
+    const argument = document.getElementById("argument").value.trim();
+
+    if (!topic) return alert("Please enter a debate topic first.");
+    if (!argument || argument.length < 20) return alert("Please write a proper argument (at least a sentence or two).");
+
+    setLoading(true);
+
+    const resultsEl = document.getElementById("results");
+    resultsEl.innerHTML = `<div class="spinner-wrap"><div class="spinner"></div> ${mode === 'opponent' ? 'Preparing the counter-argument...' : 'Evaluating your argument...'}</div>`;
+    resultsEl.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    try {
+      const res = await fetch("/api/debate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ topic, userArgument: argument, mode, stance: currentStance }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        resultsEl.innerHTML = `<div class="card"><div class="form-section" style="color:var(--red)">Error: ${data.error}</div></div>`;
+        return;
+      }
+
+      if (mode === "opponent") {
+        renderOpponent(data.result, topic);
+      } else {
+        renderJudge(data.result, data.raw);
+      }
+
+    } catch (err) {
+      resultsEl.innerHTML = `<div class="card"><div class="form-section" style="color:var(--red)">Network error. Check your connection.</div></div>`;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function renderOpponent(text, topic) {
+    const paragraphs = text.split(/\n+/).filter(p => p.trim()).map(p => `<p>${p}</p>`).join("");
+    document.getElementById("results").innerHTML = `
+      <div class="result-card" style="max-width:700px;margin:0 auto 2rem;padding:0 2rem">
+        <div style="background:white;border:1.5px solid var(--border);border-radius:4px;padding:2rem;box-shadow:4px 4px 0 var(--border)">
+          <div class="result-label">⚔️ &nbsp;AI Opponent's Counter-Argument</div>
+          <div class="opponent-text">${paragraphs}</div>
+          <br/>
+          <p style="font-size:0.8rem;color:var(--muted);border-top:1px solid var(--border);padding-top:1rem;margin-top:0.5rem">
+            How did you hold up? Hit <strong>Get Judged</strong> to score your original argument.
+          </p>
+        </div>
+      </div>`;
+  }
+
+  function renderJudge(result, isRaw) {
+    if (isRaw) {
+      document.getElementById("results").innerHTML = `
+        <div style="max-width:700px;margin:0 auto 2rem;padding:0 2rem">
+          <div class="result-card"><div class="result-label">⚖️ &nbsp;Judge's Verdict</div><p>${result}</p></div>
+        </div>`;
+      return;
+    }
+
+    const { scores, overall, strengths, improvements, verdict } = result;
+    const scoreItems = Object.entries(scores).map(([name, val]) => `
+      <div class="score-item">
+        <div class="score-name">${name}</div>
+        <div class="score-bar-wrap"><div class="score-bar" style="width:${val * 10}%"></div></div>
+        <div class="score-number">${val}<span style="font-size:0.7rem;color:var(--muted)">/10</span></div>
+      </div>`).join("");
+
+    document.getElementById("results").innerHTML = `
+      <div style="max-width:700px;margin:0 auto 2rem;padding:0 2rem">
+        <div class="result-card">
+          <div class="result-label">⚖️ &nbsp;Judge's Scorecard</div>
+
+          <div class="overall-score">
+            <div class="big-number">${overall}</div>
+            <div class="out-of">Overall Score out of 10</div>
+          </div>
+
+          <div class="score-grid">${scoreItems}</div>
+
+          <div class="verdict">"${verdict}"</div>
+
+          <div class="feedback-block">
+            <h4>✓ &nbsp;Strengths</h4>
+            <p>${strengths}</p>
+          </div>
+          <div class="feedback-block" style="margin-top:0.8rem">
+            <h4 class="weak">✗ &nbsp;Areas to Improve</h4>
+            <p>${improvements}</p>
+          </div>
+        </div>
+      </div>`;
+  }
+</script>
+</body>
+</html>
